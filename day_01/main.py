@@ -23,14 +23,13 @@ def ThreeSum(numbers: list, value: int):
     return None, None, None
 
 
-
 if __name__ == "__main__":
     start_time = time.time()
     with open("input.txt") as f:
         numbers = f.readlines()
     numbers = [int(x.strip()) for x in numbers]
-    x1,y1 = TwoSum(numbers, 2020)
 
+    x1,y1 = TwoSum(numbers, 2020)
     print("Part 1: x: {}, y: {}, x+y: {}, x*y: {}"
           .format(x1,y1,(x1+y1),(x1*y1)))
 
