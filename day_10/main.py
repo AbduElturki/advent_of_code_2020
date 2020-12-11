@@ -32,12 +32,18 @@ def GetNumArrangements(jolts,idx, his_dict=None):
     his_dict[jolts[idx]] = num_arrangements
     return num_arrangements
 
+
 if __name__ == "__main__":
     #with open("example") as f:
     with open("input.txt") as f:
         jolts = [int(x.strip()) for x in f.readlines()]
+
     jolts.append(0)
     jolts.append(max(jolts)+3)
     jolts.sort()
-    print(GetNumAdapters(jolts))
-    print(GetNumArrangements(jolts, 0))
+
+    one, _, three = GetNumAdapters(jolts)
+    num_arrangements = GetNumArrangements(jolts, 0)
+
+    print("Part 1:", one * three)
+    print("Part 2:", num_arrangements)
