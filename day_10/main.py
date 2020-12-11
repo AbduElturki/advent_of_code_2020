@@ -32,8 +32,6 @@ def GetNumArrangements(jolts,idx, his_dict=None):
     his_dict[jolts[idx]] = num_arrangements
     return num_arrangements
 
-
-
 if __name__ == "__main__":
     #with open("example") as f:
     with open("input.txt") as f:
