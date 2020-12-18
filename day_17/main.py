@@ -17,20 +17,20 @@ class ConwayCubes:
             for i, cubes in enumerate(plane_3d):
                 conway_cubes_string += "Z = {}   W = {}\n\n"\
                         .format(i-self.middle_z, w-self.middle_w)
-                for cube_row in cubes:
-                    conway_cubes_string += ("".join(cube_row)+"\n")
+                for plane_2d_row in cubes:
+                    conway_cubes_string += ("".join(plane_2d_row)+"\n")
                 conway_cubes_string += "\n"
         return conway_cubes_string
 
     def expand_dimensions_vertical(self):
         for w, plane_3d in enumerate(self.world):
-            for cubes_2d in plane_3d:
-                new_rows  = "." * len(cubes_2d[0])
-                cubes_2d.append(deque(new_rows))
-                cubes_2d.appendleft(deque(new_rows))
-                for cube_row in cubes_2d:
-                    cube_row.append(".")
-                    cube_row.appendleft(".")
+            for plane_2d in plane_3d:
+                new_rows  = "." * len(plane_2d[0])
+                plane_2d.append(deque(new_rows))
+                plane_2d.appendleft(deque(new_rows))
+                for plane_2d_row in plane_2d:
+                    plane_2d_row.append(".")
+                    plane_2d_row.appendleft(".")
 
             new_plane = deque(deque("." * len(self.world[w][0][0]))
                               for _ in range(len(self.world[w][0])))
@@ -38,7 +38,6 @@ class ConwayCubes:
             self.world[w].append(deepcopy(new_plane))
             self.world[w].appendleft(deepcopy(new_plane))
         self.middle_z += 1
-
 
     def expand_dimensions_horizontal(self):
         new_plane = deque(deque("." * len(self.world[0][0][0]))
@@ -52,8 +51,8 @@ class ConwayCubes:
     def get_surrounding_active_cubes(self, x, y, z, w):
         num_active = 0
         directions = list(itertools.product((-1,0,1), repeat=4))
-        for direction in directions:
 
+        for direction in directions:
             if all([x == 0 for x in direction]) :
                 continue
             # the order is z,y,x not x,y,z
@@ -68,20 +67,20 @@ class ConwayCubes:
 
         return num_active
 
-    def Step3D(self, w_dimension=None):
-        if w_dimension is None:
-            w_dimension = self.middle_w
+    def Step3D(self, dimension_w=None):
+        if dimension_w is None:
+            dimension_w = self.middle_w
         self.expand_dimensions_vertical()
-        new_plane = deepcopy(self.world[w_dimension])
-        for z, plane in enumerate(self.world[w_dimension]):
+        new_plane = deepcopy(self.world[dimension_w])
+        for z, plane in enumerate(self.world[dimension_w]):
             for y, plane_row in enumerate(plane):
                 for x, cube in enumerate(plane_row):
-                    num_active = self.get_surrounding_active_cubes(x, y, z, w_dimension)
+                    num_active = self.get_surrounding_active_cubes(x, y, z, dimension_w)
                     if (cube == "#") and (num_active != 2) and (num_active != 3):
                         new_plane[z][y][x] = "."
                     elif (cube == ".") and (num_active == 3):
                         new_plane[z][y][x] = "#"
-        self.world[w_dimension] = new_plane
+        self.world[dimension_w] = new_plane
 
     def Step4D(self):
         self.expand_dimensions_vertical()
@@ -108,11 +107,17 @@ class ConwayCubes:
                     total_active_cubes += plane_row.count("#")
         return total_active_cubes
 
+
 if __name__ == "__main__":
     with open("input.txt") as f:
         inital_cubes_state = deque(deque(x.strip()) for x in f.readlines())
-    print(ConwayCubes(inital_cubes_state))
-    a = ConwayCubes(inital_cubes_state)
+
+    conway_3d = ConwayCubes(inital_cubes_state)
     for _ in range(6):
-        a.Step4D()
-    print(a.GetActiveCubesTotal())
+        conway_3d.Step3D()
+    print("Part 1:",conway_3d.GetActiveCubesTotal())
+
+    conway_4d = ConwayCubes(inital_cubes_state)
+    for _ in range(6):
+        conway_4d.Step4D()
+    print("Part 2:",conway_4d.GetActiveCubesTotal())
